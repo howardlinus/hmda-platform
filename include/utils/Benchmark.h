@@ -3,7 +3,6 @@
 
 #include <string>
 #include <map>
-#include <optional>
 
 namespace utils {
 
@@ -14,12 +13,13 @@ public:
     // Add benchmark data
     void addBenchmark(int year, int quarter, const std::string& product_type, double rate);
     
-    // Lookup benchmark rate - returns std::optional<double>
-    std::optional<double> get(int year, int quarter, const std::string& product_type) const;
+    // Lookup benchmark rate - returns true if found, false otherwise
+    // The value is written to *out if found
+    bool get(int year, int quarter, const std::string& product_type, double* out) const;
     
     // Helper methods
-    std::optional<double> getLatestRate(const std::string& product_type) const;
-    std::optional<double> getRateForYear(int year, const std::string& product_type) const;
+    bool getLatestRate(const std::string& product_type, double* out) const;
+    bool getRateForYear(int year, const std::string& product_type, double* out) const;
     
 private:
     struct BenchmarkKey {
@@ -36,8 +36,8 @@ private:
     
     std::map<BenchmarkKey, double> benchmarks_;
     
-    // Helper to find latest benchmark
-    std::optional<BenchmarkKey> findLatestKey(const std::string& product_type) const;
+    // Helper to find latest benchmark - returns true if found, false otherwise
+    bool findLatestKey(const std::string& product_type, BenchmarkKey* out) const;
 };
 
 } // namespace utils
