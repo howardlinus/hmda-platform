@@ -1,0 +1,5 @@
+{
+  "coefficients": [0.5, -0.3, 0.8, -0.2, 0.1, 0.15, -0.1],
+  "feature_names": ["refi_incentive", "sato", "2s10s_spread", "debt_yield", "vintage_2012", "vintage_2015", "vintage_2020"],
+  "intercept": -1.5
+}

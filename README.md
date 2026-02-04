@@ -27,6 +27,7 @@ The [Home Mortgage Disclosure Act (HMDA) Platform](http://ffiec.cfpb.gov/) is a 
   * [Microservices](#microservices)
 - [HMDA Platform Technical Architecture](#hmda-platform-technical-architecture)
 - [HMDA Data Browser Technical Architecture](#hmda-data-browser-technical-architecture)
+- [Prepayment Library (C++)](#prepayment-library-c)
 - [Running with sbt](#running-with-sbt)
 - [One-line Cloud Deployment to Dev/Prod](#one-line-cloud-deployment-to-devprod)
 - [Docker Hub](#docker-hub)
@@ -100,6 +101,152 @@ The image below shows the cloud vendor agnostic technical architecture for the H
 ## HMDA Data Browser Technical Architecture
 
 <a href="data-browser/README.md">Please view the README for HMDA Data Browser</a>
+
+## Prepayment Library (C++)
+
+This repository includes a C++ prepayment modeling library for commercial real estate (CRE) mortgages. The library provides tools for mortgage amortization, prepayment forecasting, and feature engineering.
+
+### Features
+
+- **Input-format-agnostic library**: Core library code (`src/`) has no JSON parsing dependencies
+- **ARIMAX time series forecasting**: Support for ARIMA with exogenous variables
+- **Logistic CPR modeling**: Conditional prepayment rate prediction using logistic regression
+- **Feature engineering**: Dynamic feature calculation including:
+  - Refinancing incentive
+  - Scheduled amortization to original balance (SATO)
+  - 2s/10s yield curve spread
+  - Debt yield
+  - Vintage year one-hot encoding (maps years < 2012 to 2012)
+- **Benchmark lookup**: Key-based lookup by (year, quarter, product_type)
+- **Matrix fractional powers**: With Eigen support when available, robust fallback otherwise
+- **Mortgage amortization**: Generate detailed amortization schedules with prepayment
+
+### Directory Structure
+
+```
+include/
+  utils/           # Utility headers (Benchmark, CPR, CSV, TransitionMatrix, MatrixFractional)
+  cre/             # CRE model headers (ARIMAX, FeatureBuilder, Mortgage, etc.)
+src/
+  utils/           # Utility implementations
+  *.cpp            # CRE model implementations
+examples/
+  run_arimax_infer.cpp  # Example demonstrating JSON/CSV parsing and library usage
+test_data/        # Sample JSON and CSV test data
+scripts/          # Helper scripts (fetch_vendors.sh, generate_manifest.sh)
+Makefile          # Build configuration
+```
+
+### Prerequisites
+
+- C++ compiler with C++11 support (g++, clang++)
+- Make
+
+### Optional Dependencies
+
+- **nlohmann/json**: Required for the example only (fetched by `scripts/fetch_vendors.sh`)
+- **Eigen**: Optional for matrix fractional powers (fetched by `scripts/fetch_vendors.sh`)
+
+### Building
+
+1. **Fetch vendor dependencies** (required for example):
+   ```bash
+   ./scripts/fetch_vendors.sh
+   ```
+
+2. **Build the library**:
+   ```bash
+   make lib
+   ```
+   This creates `libprepayment.a`
+
+3. **Build the example**:
+   ```bash
+   make example
+   ```
+   This creates `bin/run_arimax_infer`
+
+4. **Build everything**:
+   ```bash
+   make all
+   ```
+
+5. **Build with Eigen support** (optional):
+   ```bash
+   make HAVE_EIGEN=1
+   ```
+
+### Running the Example
+
+The example demonstrates:
+- Parsing JSON/CSV test data
+- Populating BenchmarkLookup with key-based rates
+- Constructing LogisticCPRModel via setParameters
+- Filling ARIMAXParams
+- Running Mortgage::amortizationSchedule
+
+```bash
+make run
+```
+
+Or run directly:
+```bash
+./bin/run_arimax_infer \
+  test_data/logistic_model.json \
+  test_data/model_params.json \
+  test_data/exog_future.json \
+  test_data/transition_matrix.csv
+```
+
+### Library Design Constraints
+
+- **No JSON parsing in library code**: All parsing is relegated to example code (`examples/`)
+- **Dynamic feature support**: Features are specified by the UI/caller, not hardcoded
+- **BenchmarkLookup uses (year, quarter, product_type)**: Populated by UI code
+- **LogisticCPRModel is a parameter container**: No internal JSON parsing
+- **MatrixFractional**: Uses Eigen when available, provides robust heuristic fallback
+
+### Usage Example
+
+```cpp
+#include "cre/Mortgage.h"
+#include "utils/CPR.h"
+#include "utils/Benchmark.h"
+
+// Create loan
+cre::LoanCharacteristics loan;
+loan.original_balance = 1000000.0;
+loan.current_balance = 950000.0;
+loan.interest_rate = 0.055;
+loan.remaining_term_months = 300;
+
+cre::Mortgage mortgage(loan);
+
+// Setup CPR forecast
+std::vector<double> cpr_forecast(12, 0.08);  // 8% CPR for 12 months
+
+// Generate amortization schedule
+auto schedule = mortgage.amortizationSchedule(cpr_forecast);
+
+// Process schedule
+for (const auto& row : schedule) {
+    std::cout << "Period: " << row.period 
+              << ", Balance: " << row.ending_balance
+              << ", Prepayment: " << row.prepayment_amount << std::endl;
+}
+```
+
+### Cleaning Build Artifacts
+
+```bash
+make clean
+```
+
+### Help
+
+```bash
+make help
+```
 
 ## Running with sbt
 
