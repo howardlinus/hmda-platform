@@ -1,0 +1,9 @@
+{
+  "p": 1,
+  "d": 0,
+  "q": 1,
+  "intercept": 0.05,
+  "ar_coeffs": [0.7],
+  "ma_coeffs": [0.3],
+  "exog_coeffs": [0.5, -0.2]
+}

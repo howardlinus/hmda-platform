@@ -1,0 +1,12 @@
+{
+  "coefficients": {
+    "intercept": -2.5,
+    "refi_incentive": 0.8,
+    "sato": 0.3,
+    "two_s_ten": 0.15,
+    "debt_yield": -0.2,
+    "vintage_2012": 0.1,
+    "vintage_2015": 0.05,
+    "vintage_2020": -0.1
+  }
+}
