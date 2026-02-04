@@ -26,7 +26,7 @@ bool BenchmarkLookup::get(int year, int quarter, const std::string& product_type
 }
 
 bool BenchmarkLookup::getLatestRate(const std::string& product_type, double* out) const {
-    BenchmarkKey latest_key;
+    BenchmarkKey latest_key{0, 0, ""};
     
     if (findLatestKey(product_type, &latest_key)) {
         return get(latest_key.year, latest_key.quarter, product_type, out);
@@ -64,7 +64,7 @@ bool BenchmarkLookup::getRateForYear(int year, const std::string& product_type, 
 
 bool BenchmarkLookup::findLatestKey(const std::string& product_type, BenchmarkKey* out) const {
     bool found = false;
-    BenchmarkKey latest_key;
+    BenchmarkKey latest_key{0, 0, ""};
     
     for (std::map<BenchmarkKey, double>::const_iterator it = benchmarks_.begin(); 
          it != benchmarks_.end(); ++it) {
