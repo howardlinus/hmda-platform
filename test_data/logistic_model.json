@@ -1,0 +1,5 @@
+{
+  "coefficients": [0.8, -0.5, 0.3, 0.15],
+  "intercept": -1.2,
+  "feature_names": ["refi_incentive", "sato", "2s10s_spread", "debt_yield"]
+}

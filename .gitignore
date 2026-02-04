@@ -100,3 +100,8 @@ scalastyle-config.xml
 projectFilesBackup/
 .ensime
 *.iml
+
+# C++ Prepayment Library Build Artifacts
+libprepayment.a
+examples/run_arimax_infer
+vendor/
