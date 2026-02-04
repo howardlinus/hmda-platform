@@ -99,7 +99,10 @@ std::vector<std::vector<double>> MatrixFractional::powerWithHeuristic(
     
     // Heuristic approximation for fractional powers
     // Use Taylor series: A^alpha ≈ I + alpha*(A - I) + O(alpha^2)
-    // This is a first-order approximation suitable for alpha close to 1
+    // This is a first-order approximation suitable for alpha close to 1.
+    // Note: Accuracy decreases as alpha moves away from 1. For alpha in [0.5, 1.5],
+    // the approximation is generally acceptable for stochastic matrices.
+    // For higher accuracy, rebuild with Eigen support (make HAVE_EIGEN=1).
     auto I = identity(n);
     std::vector<std::vector<double>> result(n, std::vector<double>(n));
     

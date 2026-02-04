@@ -165,14 +165,14 @@ int main(int argc, char* argv[]) {
         std::cout << "   Loan: $" << loan.current_balance << " at " << (loan.interest_rate * 100) 
                   << "% for " << loan.remaining_term_months << " months" << std::endl;
         
-        // 8. Generate CPR forecast (simple example: use constant CPR)
+        // 8. Generate CPR forecast
+        // For this example, we use a constant CPR. In production, you could:
+        // - Use ARIMAX to forecast CPR from historical data and exogenous variables
+        // - Use the LogisticCPRModel with current loan features
+        // - Combine multiple forecasting methods
         std::cout << "\n8. Generating CPR forecast" << std::endl;
         int forecast_periods = 12;  // 1 year
         std::vector<double> cpr_forecast(forecast_periods, 0.08);  // 8% CPR
-        
-        // Could use ARIMAX for more sophisticated forecast
-        // std::vector<double> history = {0.05, 0.06, 0.07, 0.08};
-        // cpr_forecast = arimax_model.forecast(history, exog_future, forecast_periods);
         
         std::cout << "   Generated " << forecast_periods << " periods with constant CPR 8%" << std::endl;
         

@@ -83,9 +83,13 @@ std::vector<double> ARIMAX::forecast(
         for (int p = 0; p < params_.order_ar; ++p) {
             if (p < static_cast<int>(level_forecasts.size())) {
                 forecast_val += params_.ar_params[p] * level_forecasts[level_forecasts.size() - 1 - p];
-            } else if (p - level_forecasts.size() < diff_history.size()) {
-                int idx = diff_history.size() - 1 - (p - level_forecasts.size());
-                forecast_val += params_.ar_params[p] * diff_history[idx];
+            } else {
+                // Use history only if we have enough data
+                int history_idx = p - static_cast<int>(level_forecasts.size());
+                if (history_idx < static_cast<int>(diff_history.size())) {
+                    int idx = diff_history.size() - 1 - history_idx;
+                    forecast_val += params_.ar_params[p] * diff_history[idx];
+                }
             }
         }
         
