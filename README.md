@@ -239,3 +239,129 @@ Related projects
   - https://github.com/cfpb/hmda-test-files - Repo for automatically generating various different test files for HMDA Data
   - https://github.com/cfpb/hmda-census - ETL for geographic and Census data used by the HMDA Platform
   - https://github.com/cfpb/HMDA_Data_Science_Kit - Repo for HMDA Data science work as well as Spark codebase for [Public Facing A&D Reports](https://ffiec.cfpb.gov/data-publication/disclosure-reports/2018)
+
+## Prepayment Library
+
+This repository includes a C++ prepayment modeling library and example application for commercial real estate (CRE) loan prepayment prediction.
+
+### Directory Structure
+
+```
+├── include/          # Header files
+│   ├── cre/         # CRE-specific models (ARIMAX, PrepaymentModel, Mortgage, etc.)
+│   └── utils/       # Utility classes (Benchmark, CPR, CSV, TransitionMatrix, etc.)
+├── src/             # Implementation files (NO JSON parsing)
+│   ├── utils/       # Utility implementations
+│   ├── ARIMAX.cpp
+│   ├── RegressionModel.cpp
+│   ├── FeatureBuilder.cpp
+│   └── Mortgage.cpp
+├── examples/        # Example applications (JSON parsing allowed here)
+│   └── run_arimax_infer.cpp
+├── test_data/       # Sample test data files
+├── scripts/         # Build and utility scripts
+│   ├── fetch_vendors.sh      # Download vendor headers (nlohmann/json, Eigen)
+│   └── generate_manifest.sh  # Generate file manifest
+├── Makefile         # Build configuration
+└── vendor/          # Third-party header libraries (gitignored, fetched via script)
+```
+
+### Building
+
+1. **Fetch vendor dependencies:**
+   ```bash
+   ./scripts/fetch_vendors.sh
+   ```
+   This downloads:
+   - `nlohmann/json` (required for example only)
+   - `Eigen` (optional, for MatrixFractional optimization)
+
+2. **Build the library and example:**
+   ```bash
+   make
+   ```
+   This produces:
+   - `libprepayment.a` - Static library
+   - `examples/run_arimax_infer` - Example binary
+
+3. **Clean build artifacts:**
+   ```bash
+   make clean
+   ```
+
+### Usage
+
+Run the example with default test data:
+```bash
+./examples/run_arimax_infer
+```
+
+Or specify custom data files:
+```bash
+./examples/run_arimax_infer \
+  test_data/logistic_model.json \
+  test_data/model_params.json \
+  test_data/exog_future.json \
+  test_data/transition_matrix.csv
+```
+
+### Library Features
+
+#### FeatureBuilder
+Constructs features for prepayment models. Supports:
+- `refi_incentive` - Refinancing incentive (coupon - benchmark rate)
+- `sato` - Seasonality-adjusted turnover
+- `2s10s_spread` (alias `two_s_ten`) - 2s-10s yield curve spread
+- `debt_yield` - Debt yield metric
+- `vintage_YYYY` - One-hot encoding for loan vintage year (maps years < 2012 to 2012)
+
+#### BenchmarkLookup
+Stores and retrieves benchmark rates using `(year, quarter, product_type)` as the lookup key.
+
+#### LogisticCPRModel
+Parameter container for logistic CPR (Conditional Prepayment Rate) models:
+- `setParameters(coefficients, intercept)` - Configure model
+- `predict(features)` - Predict CPR probability
+
+#### MatrixFractional
+Computes fractional matrix powers for transition matrices:
+- Uses Eigen library when available (`-DUSE_EIGEN` flag)
+- Falls back to heuristic approximation otherwise
+
+#### Mortgage
+Calculates amortization schedules with optional CPR:
+- `calculateMonthlyPayment()` - Fixed-rate payment calculation
+- `amortizationSchedule(cpr_rates)` - Generate schedule with prepayments
+
+### Constraints
+
+- **No JSON parsing in `src/` files** - JSON handling is restricted to `examples/` directory
+- **Feature constraints** - FeatureBuilder only supports the documented features
+- **Product type required** - BenchmarkLookup requires product_type in addition to year/quarter
+
+### Example Output
+
+```
+=== Prepayment Model Example ===
+
+Loading logistic model from: test_data/logistic_model.json
+Configured 4 features
+Loaded 4 benchmark rates
+
+Built feature vector (size=4):
+  refi_incentive: 0.01
+  sato: 0.15
+  2s10s_spread: 0.025
+  debt_yield: 0.12
+
+Predicted CPR: 25.3%
+
+=== Mortgage Amortization Example ===
+Mortgage: $300000 at 4.5% for 360 months
+Monthly payment: $1520.06
+
+First 12 months of amortization schedule:
+Period | Principal | Interest | Remaining | CPR
+  1    | $395.06 | $1125.00 | $298479.78 | 25.3%
+  ...
+```
