@@ -1,0 +1,7 @@
+{
+  "ar_params": [0.7, -0.2],
+  "ma_params": [0.3],
+  "exog_params": [0.1, -0.05, 0.08],
+  "constant": 0.02,
+  "order": [2, 1, 1]
+}

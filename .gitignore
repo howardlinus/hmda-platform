@@ -100,3 +100,13 @@ scalastyle-config.xml
 projectFilesBackup/
 .ensime
 *.iml
+
+# C++ build artifacts #
+#######################
+build/
+bin/
+*.a
+*.so
+*.dylib
+vendor/
+MANIFEST.txt
