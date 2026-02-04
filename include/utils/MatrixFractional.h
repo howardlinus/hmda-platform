@@ -4,6 +4,7 @@
 #include <vector>
 #include <cmath>
 #include <stdexcept>
+#include "TransitionMatrix.h"
 
 // Check if Eigen is available
 #ifdef USE_EIGEN
@@ -153,21 +154,7 @@ private:
     }
 };
 
-// Helper function to validate transition matrix
-inline bool validateTransitionMatrix(const std::vector<std::vector<double>>& matrix) {
-    if (matrix.empty()) return false;
 
-    const double tolerance = 1e-6;
-    for (const auto& row : matrix) {
-        double sum = 0.0;
-        for (double val : row) {
-            if (val < 0.0 || val > 1.0) return false;
-            sum += val;
-        }
-        if (std::abs(sum - 1.0) > tolerance) return false;
-    }
-    return true;
-}
 
 } // namespace util
 

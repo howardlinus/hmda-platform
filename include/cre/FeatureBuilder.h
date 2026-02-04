@@ -96,7 +96,7 @@ private:
             return data.debt_yield;
         } else if (feature.substr(0, 8) == "vintage_") {
             // One-hot encoding for vintage year
-            // Map any year < 2012 to 2012
+            // Map any year < 2012 to 2012, years >= 2012 use actual value
             int vintage_year = std::max(data.start_year, 2012);
             int feature_year = std::stoi(feature.substr(8));
             return (vintage_year == feature_year) ? 1.0 : 0.0;

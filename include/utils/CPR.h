@@ -3,6 +3,8 @@
 
 #include <vector>
 #include <cmath>
+#include <stdexcept>
+#include <sstream>
 
 namespace util {
 
@@ -19,9 +21,13 @@ public:
 
     // Predict CPR given features
     // Returns probability in [0, 1] range
+    // Throws std::runtime_error if feature dimension mismatch
     double predict(const std::vector<double>& features) const {
         if (features.size() != coefficients_.size()) {
-            return 0.0; // Return default if size mismatch
+            std::ostringstream oss;
+            oss << "Feature size mismatch: expected " << coefficients_.size() 
+                << ", got " << features.size();
+            throw std::runtime_error(oss.str());
         }
 
         double logit = intercept_;

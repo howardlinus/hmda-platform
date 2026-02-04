@@ -118,9 +118,15 @@ int main(int argc, char* argv[]) {
         
         std::vector<std::vector<double>> trans_matrix;
         for (size_t i = 1; i < csv_data.size(); ++i) { // Skip header
+            // Skip empty rows
+            if (csv_data[i].empty() || (csv_data[i].size() == 1 && csv_data[i][0].empty())) {
+                continue;
+            }
             std::vector<double> row;
             for (size_t j = 1; j < csv_data[i].size(); ++j) { // Skip row label
-                row.push_back(std::stod(csv_data[i][j]));
+                if (!csv_data[i][j].empty()) {
+                    row.push_back(std::stod(csv_data[i][j]));
+                }
             }
             if (!row.empty()) {
                 trans_matrix.push_back(row);
