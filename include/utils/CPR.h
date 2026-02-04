@@ -2,6 +2,7 @@
 #define CPR_H
 
 #include <vector>
+#include <string>
 
 namespace utils {
 

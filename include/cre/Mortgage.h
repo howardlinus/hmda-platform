@@ -3,7 +3,7 @@
 
 #include <vector>
 #include <string>
-#include "TransitionMatrix.h"
+#include "utils/TransitionMatrix.h"
 
 namespace cre {
 

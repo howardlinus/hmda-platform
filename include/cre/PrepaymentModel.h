@@ -1,8 +1,8 @@
 #ifndef PREPAYMENT_MODEL_H
 #define PREPAYMENT_MODEL_H
 
-#include "CPR.h"
-#include "FeatureBuilder.h"
+#include "utils/CPR.h"
+#include "cre/FeatureBuilder.h"
 #include <vector>
 #include <map>
 

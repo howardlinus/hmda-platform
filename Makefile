@@ -47,7 +47,7 @@ LIB_OBJS = $(UTILS_OBJS) $(CRE_OBJS)
 # Example
 EXAMPLE_SRC = examples/run_arimax_infer.cpp
 EXAMPLE_BIN = $(BIN_DIR)/run_arimax_infer
-EXAMPLE_CXXFLAGS = $(CXXFLAGS) -I./vendor/nlohmann
+EXAMPLE_CXXFLAGS = $(CXXFLAGS) -I./vendor
 
 # Default target
 .PHONY: all
