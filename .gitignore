@@ -100,3 +100,13 @@ scalastyle-config.xml
 projectFilesBackup/
 .ensime
 *.iml
+
+# C++ Build #
+#############
+build/
+*.a
+*.so
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
