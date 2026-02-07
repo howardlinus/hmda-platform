@@ -17,7 +17,6 @@ The FeatureBuilder is a component for calculating refinancing incentives with pe
 
 - **FeatureRequest**: Input parameters including loan term, amortization type, loan start date, and penalty points
 - **FeatureResponse**: Output containing refi_incentives, penalty points (padded), and adjusted incentives
-- **BenchmarkData**: Period-specific benchmark data
 
 ### Core Logic
 
@@ -133,7 +132,7 @@ Test files:
 
 ### Design Decisions
 
-1. **JSON at Application Level**: The penalty_point values are provided through JSON configuration at the application level, not parsed from JSON in library-level C++ files. This keeps the library code clean and focused on calculations.
+1. **JSON at Application Level**: The penalty_point values are provided through JSON configuration at the application level, not parsed from JSON in library-level code. This keeps the library code clean and focused on calculations.
 
 2. **Immutable Data Structures**: All data models use immutable Scala case classes for thread safety and functional programming best practices.
 
@@ -159,8 +158,7 @@ ratespread-calculator/
     │   ├── FeatureBuilder.scala                 # Main feature builder logic
     │   ├── models/
     │   │   ├── FeatureRequest.scala             # Input model
-    │   │   ├── FeatureResponse.scala            # Output model
-    │   │   └── BenchmarkData.scala              # Benchmark data model
+    │   │   └── FeatureResponse.scala            # Output model
     │   ├── parser/
     │   │   └── FeatureConfigParser.scala        # JSON parser
     │   └── examples/

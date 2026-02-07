@@ -1,7 +1,7 @@
 package hmda.calculator.features
 
 import hmda.calculator.apor.{ APOR, APORCommands, RateType, FixedRate, VariableRate }
-import hmda.calculator.features.models.{ FeatureRequest, FeatureResponse, BenchmarkData }
+import hmda.calculator.features.models.{ FeatureRequest, FeatureResponse }
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
