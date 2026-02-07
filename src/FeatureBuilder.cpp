@@ -8,18 +8,17 @@ std::vector<double> computeFeatureVector(const FeatureContext& ctx) {
     std::vector<double> features;
     
     // Calculate refi_incentive feature
-    // Formula: (benchmark_running - benchmark_start) OR (annual_rate - forecast_rate_or_exog)
-    //          MINUS penalty_points[period-1]
+    // Formula: base_incentive - penalty_points[period-1]
+    // where base_incentive is:
+    //   - Primary: (benchmark_running - benchmark_start)
+    //   - Fallback: (annual_rate - forecast_rate_or_exog) if benchmarks are equal
     
-    // First, compute the base incentive value
-    // Using the benchmark difference as the primary calculation
+    // Compute the base incentive value
+    // Using benchmark difference as the primary calculation method
     double base_incentive = ctx.benchmark_running - ctx.benchmark_start;
     
-    // Alternative calculation using rates (can be used based on context)
-    // Keeping the benchmark-based calculation as the primary one
-    // The "OR" in the formula suggests this could be an alternative calculation
-    // depending on the use case. For this implementation, we'll use benchmark difference
-    // but if benchmark values are equal, we'll use the rate difference
+    // If benchmark values are effectively equal (within numerical tolerance),
+    // use the rate difference as an alternative calculation
     if (std::abs(ctx.benchmark_running - ctx.benchmark_start) < 1e-9) {
         base_incentive = ctx.annual_rate - ctx.forecast_rate_or_exog;
     }

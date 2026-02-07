@@ -46,9 +46,11 @@ struct FeatureContext {
  * This function calculates various features including the refi_incentive feature,
  * which is computed as:
  *
- * refi_incentive = (benchmark_running - benchmark_start) OR
- *                  (annual_rate - forecast_rate_or_exog)
- *                  MINUS penalty_points[period-1]
+ * refi_incentive = base_incentive - penalty_points[period-1]
+ *
+ * where base_incentive is calculated as:
+ *   - Primary: (benchmark_running - benchmark_start)
+ *   - Fallback: (annual_rate - forecast_rate_or_exog) if benchmarks are equal
  *
  * The penalty_points array is indexed by (period-1) since periods are 1-indexed
  * but arrays are 0-indexed. If penalty_points is not provided or if the period
