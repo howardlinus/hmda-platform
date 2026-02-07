@@ -1,0 +1,7 @@
+{
+  "loanTerm": 30,
+  "amortizationType": "FixedRate",
+  "loanStartDate": "2018-03-22",
+  "numberOfPeriods": 8,
+  "penaltyPoints": [0.1, 0.2, 0.15, 0.1, 0.05]
+}
