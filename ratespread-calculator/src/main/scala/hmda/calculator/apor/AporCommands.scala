@@ -66,7 +66,7 @@ object APORCommands {
   private def calculateRateSpread(apr: Double, apor: Double): BigDecimal =
     BigDecimal(apr - apor).setScale(3, BigDecimal.RoundingMode.HALF_UP)
 
-  private def aporForDateAndLoanTerm(loanTerm: Int, amortizationType: RateType, lockInDate: LocalDate): Option[Double] = {
+  def aporForDateAndLoanTerm(loanTerm: Int, amortizationType: RateType, lockInDate: LocalDate): Option[Double] = {
 
     val aporData = getAporMap(amortizationType).values.find { apor =>
       weekNumberForDate(apor.rateDate) == weekNumberForDate(lockInDate) &&
